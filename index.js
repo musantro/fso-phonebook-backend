@@ -37,6 +37,10 @@ let persons = [
   }
 ]
 
+morgan.token('body', (req, res) => req.method === 'POST' ? JSON.stringify(req.body) : '');
+
+app.use(morgan(':method :url :status - :response-time ms :body'))
+
 app.get('/info', (request, response) => {
   response.send(
     `<p>Phonebook has info for ${persons.length} people</p>\n<p>${new Date()}</p>`
@@ -62,7 +66,6 @@ app.delete('/api/persons/:id', (request, response) => {
   persons = persons.filter(person => person.id !== id)
   response.status(204).end()
 })
-
 const generateId = () => {
   const bigAmount = 100_000_000
   return Math.ceil(Math.random() * bigAmount);
@@ -95,8 +98,6 @@ app.post('/api/persons', (request, response) => {
 
   response.json(person)
 })
-
-app.use(morgan('tiny'))
 
 
 const PORT = 3001
